@@ -165,10 +165,19 @@ Set `BATFISH_HOST` to point at a remote server.
 - **Options structs** replace Python keyword arguments.
 - **Question access** goes through `session.Q.Get(name)`; there are no dynamic
   attributes.
-- **Capirca**: Capirca is a Python library. `gobatfish` exposes
-  `CreateReferenceBookFromDefinitions` for an already-parsed definitions model
-  and `InitSnapshotFromACL` for already-rendered ACL text.
-- **MCP server**: not ported.
+
+## Out of scope
+
+The following pybatfish features are intentionally not ported:
+
+- **Capirca integration.** Capirca is a Python library, and its policy language
+  plus per-vendor ACL generators are large. `gobatfish` exposes
+  `CreateReferenceBookFromDefinitions` (from an already-parsed definitions
+  model) and `InitSnapshotFromACL` (from already-rendered ACL text) as
+  integration points, but does not parse `.net`/`.svc`/`.pol` files itself.
+- **MCP server.**
+- **Jupyter notebooks.** The reference documentation is provided as Markdown
+  under `docs/` instead.
 
 ## License
 
