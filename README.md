@@ -122,6 +122,7 @@ pybatfish names and semantics.
 | `pybatfish.question` | `gobatfish/question` |
 | `pybatfish.exception` | `gobatfish/exception` |
 | `pybatfish.util` | `gobatfish/util` |
+| `pybatfish.mcp` | `gobatfish/mcp` (+ `cmd/batfish-mcp`) |
 | `pandas.DataFrame` | `gobatfish/dataframe` |
 
 `gobatfish/dataframe` is a small, dependency-free, object-typed data frame that
@@ -136,6 +137,22 @@ struct.
 - [Datamodel classes](docs/datamodel.md)
 - [Assertions](docs/asserts.md)
 - [Data frame](docs/dataframe.md)
+- [MCP server](docs/mcp.md)
+
+## MCP server
+
+`gobatfish/mcp` exposes Batfish to AI agents over the Model Context Protocol,
+using the official Go SDK with structured tool outputs. It supports both the
+stdio and Streamable HTTP transports:
+
+```bash
+go build -o batfish-mcp ./cmd/batfish-mcp
+batfish-mcp                              # stdio
+batfish-mcp -transport http -addr :8080  # Streamable HTTP
+```
+
+See [docs/mcp.md](docs/mcp.md) for the tool list, session configuration and
+client setup.
 
 ## Testing
 
@@ -175,7 +192,6 @@ The following pybatfish features are intentionally not ported:
   `CreateReferenceBookFromDefinitions` (from an already-parsed definitions
   model) and `InitSnapshotFromACL` (from already-rendered ACL text) as
   integration points, but does not parse `.net`/`.svc`/`.pol` files itself.
-- **MCP server.**
 - **Jupyter notebooks.** The reference documentation is provided as Markdown
   under `docs/` instead.
 
