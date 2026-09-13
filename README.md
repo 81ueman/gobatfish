@@ -172,5 +172,11 @@ Set `BATFISH_HOST` to point at a remote server.
 
 ## License
 
-Apache License 2.0. This library is a Go port of pybatfish, which is also
-licensed under Apache 2.0.
+Apache License 2.0. This library is a Go port of
+[pybatfish](https://github.com/batfish/pybatfish) and derives from the
+[Batfish](https://github.com/batfish/batfish) data model, both of which are
+licensed under Apache 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+The Go implementation was written from scratch against the pybatfish public
+API. The Python source was used as the reference for behavior, naming and
+documentation, but was not copied verbatim.

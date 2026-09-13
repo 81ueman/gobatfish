@@ -1,0 +1,17 @@
+gobatfish
+Copyright 2026 The gobatfish Authors
+
+This product is a Go port of pybatfish
+(https://github.com/batfish/pybatfish),
+Copyright 2018 The Batfish Open Source Project,
+licensed under the Apache License, Version 2.0.
+
+It also derives from the Batfish data model
+(https://github.com/batfish/batfish),
+Copyright The Batfish Open Source Project,
+licensed under the Apache License, Version 2.0.
+
+The Go implementation was written from scratch against the pybatfish public
+API; the Python source was not copied verbatim but was used as the reference
+for behavior, naming and documentation. See the README for the list of
+intentional deviations.
