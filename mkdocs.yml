@@ -1,0 +1,56 @@
+site_name: gobatfish
+site_description: Go client library for Batfish, mirroring pybatfish
+site_url: https://81ueman.github.io/gobatfish/
+repo_url: https://github.com/81ueman/gobatfish
+repo_name: 81ueman/gobatfish
+edit_uri: edit/main/docs/
+copyright: Apache License 2.0
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Getting started: getting_started.md
+  - Questions and answers: questions.md
+  - Datamodel classes: datamodel.md
+  - Assertions: asserts.md
+  - Data frame: dataframe.md
+  - MCP server: mcp.md
+  - API reference: https://pkg.go.dev/github.com/81ueman/gobatfish
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
