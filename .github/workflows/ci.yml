@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./... -count=1
+
+  integration:
+    name: Integration tests (Batfish)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Start Batfish allinone
+        run: docker run -d --name batfish -p 9996:9996 -p 9997:9997 batfish/allinone
+      - name: Wait for Batfish
+        run: |
+          for _ in $(seq 1 60); do
+            if curl -fsS http://localhost:9996/v2/version \
+                -H 'X-Batfish-Apikey: 00000000000000000000000000000000' >/dev/null; then
+              echo "Batfish is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Batfish did not become ready in time"
+          docker logs batfish || true
+          exit 1
+      - name: Run integration tests
+        env:
+          BATFISH_INTEGRATION: "1"
+        run: go test ./client/ -run Integration -count=1 -v
+      - name: Batfish logs
+        if: always()
+        run: docker logs batfish || true
