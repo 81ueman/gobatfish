@@ -93,6 +93,28 @@ func TestGetUUIDUnique(t *testing.T) {
 	}
 }
 
+type htmlThing struct{ s string }
+
+func (h htmlThing) HTML() string { return "<b>" + h.s + "</b>" }
+
+func TestGetHTML(t *testing.T) {
+	if got := GetHTML("astring"); got != "astring" {
+		t.Fatalf("got %q", got)
+	}
+	if got := GetHTML(1.2); got != "1.2" {
+		t.Fatalf("got %q", got)
+	}
+	if got := GetHTML(100); got != "100" {
+		t.Fatalf("got %q", got)
+	}
+	if got := GetHTML(htmlThing{s: "x"}); got != "<b>x</b>" {
+		t.Fatalf("got %q", got)
+	}
+	if got := GetHTML("a&b"); got != "a&amp;b" {
+		t.Fatalf("got %q", got)
+	}
+}
+
 func TestZipDir(t *testing.T) {
 	dir := t.TempDir()
 	sub := filepath.Join(dir, "dirname")

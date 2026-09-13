@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"sort"
 	"strings"
 
 	"github.com/81ueman/gobatfish/datamodel"
@@ -46,7 +47,13 @@ func CreateReferenceBookFromDefinitions(definitions *Definitions, bookName strin
 		return datamodel.ReferenceBook{}, fmt.Errorf("definitions must not be nil")
 	}
 	var groups []datamodel.AddressGroup
-	for name, network := range definitions.Networks {
+	names := make([]string, 0, len(definitions.Networks))
+	for name := range definitions.Networks {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		network := definitions.Networks[name]
 		group, err := entryToGroup(name, network.Items, definitions)
 		if err != nil {
 			return datamodel.ReferenceBook{}, err
