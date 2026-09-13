@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/81ueman/gobatfish/dataframe"
 	"github.com/81ueman/gobatfish/datamodel"
 	"github.com/81ueman/gobatfish/datamodel/answer"
 	"github.com/81ueman/gobatfish/exception"
@@ -528,6 +529,28 @@ func (s *Session) GetAnswer(ctx context.Context, questionName, snapshot string, 
 		return answer.NewTableAnswer(ans)
 	}
 	return answer.NewAnswer(ans), nil
+}
+
+// Ask configures the named question with vars, answers it, and returns the
+// answer table as a data frame. It is a convenience for programmatic callers
+// (such as the MCP server) that do not want to manage question objects.
+func (s *Session) Ask(ctx context.Context, questionName string, vars map[string]any, snapshot, referenceSnapshot *string) (*dataframe.DataFrame, error) {
+	q, err := s.Q.Get(questionName)
+	if err != nil {
+		return nil, err
+	}
+	for name, value := range vars {
+		q.Set(name, value)
+	}
+	result, err := q.Answer(ctx, question.AnswerOptions{Snapshot: snapshot, ReferenceSnapshot: referenceSnapshot})
+	if err != nil {
+		return nil, err
+	}
+	table, ok := result.Table()
+	if !ok {
+		return nil, fmt.Errorf("%s did not return a table answer", questionName)
+	}
+	return table.Frame(), nil
 }
 
 // GetNodeRoles returns node roles definitions for the active network or

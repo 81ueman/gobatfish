@@ -57,7 +57,7 @@ jobs:
       - name: Run integration tests
         env:
           BATFISH_INTEGRATION: "1"
-        run: go test ./client/ -run Integration -count=1 -v
+        run: go test ./client/ ./mcp/ -run Integration -count=1 -v
       - name: Batfish logs
         if: always()
         run: docker logs batfish || true
