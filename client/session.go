@@ -335,14 +335,34 @@ func (s *Session) InitSnapshot(ctx context.Context, upload string, opts InitSnap
 }
 
 func (s *Session) initSnapshot(ctx context.Context, upload string, opts InitSnapshotOptions) (string, error) {
+	name, err := s.prepareSnapshot(ctx, opts)
+	if err != nil {
+		return "", err
+	}
 	data, err := snapshotBytes(upload)
 	if err != nil {
 		return "", err
 	}
-	return s.initSnapshotData(ctx, data, opts)
+	if err := s.uploadSnapshot(ctx, name, data); err != nil {
+		return "", err
+	}
+	return s.parseSnapshot(ctx, name, opts.Background, opts.ExtraArgs)
 }
 
 func (s *Session) initSnapshotData(ctx context.Context, data []byte, opts InitSnapshotOptions) (string, error) {
+	name, err := s.prepareSnapshot(ctx, opts)
+	if err != nil {
+		return "", err
+	}
+	if err := s.uploadSnapshot(ctx, name, data); err != nil {
+		return "", err
+	}
+	return s.parseSnapshot(ctx, name, opts.Background, opts.ExtraArgs)
+}
+
+// prepareSnapshot ensures a network is set, generates a name when needed,
+// validates it, and checks for an existing snapshot.
+func (s *Session) prepareSnapshot(ctx context.Context, opts InitSnapshotOptions) (string, error) {
 	if s.Network == nil {
 		if _, err := s.SetNetwork(ctx, ""); err != nil {
 			return "", err
@@ -358,10 +378,7 @@ func (s *Session) initSnapshotData(ctx context.Context, data []byte, opts InitSn
 	if err := s.checkSnapshotOverwrite(ctx, name, opts.Overwrite); err != nil {
 		return "", err
 	}
-	if err := s.uploadSnapshot(ctx, name, data); err != nil {
-		return "", err
-	}
-	return s.parseSnapshot(ctx, name, opts.Background, opts.ExtraArgs)
+	return name, nil
 }
 
 // InitSnapshotFromTextOptions configures InitSnapshotFromText.

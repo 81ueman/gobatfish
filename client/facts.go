@@ -317,6 +317,13 @@ func orCreateOSPFInterfaces(nodeDict map[string]any, node, process, area string)
 
 // LoadFacts loads facts from YAML files in the specified directory.
 func LoadFacts(inputDirectory string) (map[string]any, error) {
+	info, err := os.Stat(inputDirectory)
+	if err != nil {
+		return nil, err
+	}
+	if !info.IsDir() {
+		return nil, fmt.Errorf("Not a directory: %s", inputDirectory)
+	}
 	out := map[string]any{"version": nil, "nodes": map[string]any{}}
 	outNodes := out["nodes"].(map[string]any)
 	entries, err := os.ReadDir(inputDirectory)
@@ -324,7 +331,7 @@ func LoadFacts(inputDirectory string) (map[string]any, error) {
 		return nil, err
 	}
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("no files present in specified directory")
+		return nil, fmt.Errorf("No files present in specified directory")
 	}
 	for _, entry := range entries {
 		if entry.IsDir() {
@@ -344,7 +351,7 @@ func LoadFacts(inputDirectory string) (map[string]any, error) {
 			versionText = fmt.Sprint(version)
 		}
 		if out["version"] != nil && versionText != fmt.Sprint(out["version"]) {
-			return nil, fmt.Errorf("input file version mismatch")
+			return nil, fmt.Errorf("Input file version mismatch")
 		}
 		out["version"] = versionText
 		if nodesMap, ok := nodes.(map[string]any); ok {

@@ -95,10 +95,11 @@ func itemToPythonRepr(item string, definitions *Definitions) (string, string, er
 		return ip.String(), "v6", nil
 	}
 	if _, ipNet, err := net.ParseCIDR(s); err == nil {
+		masked := &net.IPNet{IP: ipNet.IP.Mask(ipNet.Mask), Mask: ipNet.Mask}
 		if ipNet.IP.To4() != nil {
-			return ipNet.String(), "v4", nil
+			return masked.String(), "v4", nil
 		}
-		return ipNet.String(), "v6", nil
+		return masked.String(), "v6", nil
 	}
 	return "", "", fmt.Errorf("unknown how to convert %s", s)
 }

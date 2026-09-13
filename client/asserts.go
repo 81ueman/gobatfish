@@ -110,7 +110,7 @@ func AssertHasRoute(routes any, expectedRoute map[string]any, node, vrf string, 
 	if dict, ok := routes.(map[string]map[string][]map[string]any); ok {
 		return assertHasRouteDict(dict, expectedRoute, node, vrf, soft)
 	}
-	return false, fmt.Errorf("'routes' is neither a DataFrame nor a dictionary")
+	return false, fmt.Errorf("'routes' is neither a Pandas DataFrame nor a dictionary")
 }
 
 func assertHasRouteDF(df *dataframe.DataFrame, expectedRoute map[string]any, node, vrf string, soft bool) (bool, error) {
@@ -155,7 +155,7 @@ func AssertHasNoRoute(routes any, expectedRoute map[string]any, node, vrf string
 	if dict, ok := routes.(map[string]map[string][]map[string]any); ok {
 		return assertHasNoRouteDict(dict, expectedRoute, node, vrf, soft)
 	}
-	return false, fmt.Errorf("'routes' is neither a DataFrame nor a dictionary")
+	return false, fmt.Errorf("'routes' is neither a Pandas DataFrame nor a dictionary")
 }
 
 func assertHasNoRouteDF(df *dataframe.DataFrame, expectedRoute map[string]any, node, vrf string, soft bool) (bool, error) {
@@ -321,7 +321,7 @@ func AssertNoIncompatibleBGPSessions(ctx context.Context, nodes, remoteNodes, st
 	if err != nil {
 		return false, err
 	}
-	if status == nil {
+	if status == nil && df.HasColumn("Configured_Status") {
 		ignored := []any{"UNIQUE_MATCH", "DYNAMIC_MATCH", "UNKNOWN_REMOTE"}
 		df = df.Filter(df.Col("Configured_Status").NotIn(ignored...))
 	}
@@ -442,7 +442,13 @@ func AssertNoDuplicateRouterIDs(ctx context.Context, snapshot *string, nodes *st
 }
 
 func duplicateRouterIDs(df *dataframe.DataFrame, ignoreSameNode bool) (*dataframe.DataFrame, error) {
+	if !df.HasColumn("Router_ID") {
+		return dataframe.Empty(), nil
+	}
 	if ignoreSameNode {
+		if !df.HasColumn("Node") {
+			return dataframe.Empty(), nil
+		}
 		return df.GroupBy("Router_ID").Filter(func(g *dataframe.DataFrame) bool {
 			uniqueNodes := g.Col("Node").NUnique()
 			return uniqueNodes > 1 && uniqueNodes != g.Len()

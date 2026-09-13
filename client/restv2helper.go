@@ -400,6 +400,18 @@ func (s *Session) getComponentVersions(ctx context.Context) (map[string]any, err
 	return s.getDict(ctx, "/version", nil)
 }
 
+// GetAPIVersion returns the API version if present, else "2.0.0".
+func (s *Session) GetAPIVersion(ctx context.Context) (string, error) {
+	versions, err := s.getComponentVersions(ctx)
+	if err != nil {
+		return "", err
+	}
+	if v, ok := versions[KeyAPIVersion]; ok && v != nil && fmt.Sprint(v) != "" {
+		return fmt.Sprint(v), nil
+	}
+	return "2.0.0", nil
+}
+
 func (s *Session) getQuestionTemplates(ctx context.Context, verbose bool) (map[string]any, error) {
 	return s.getDict(ctx, "/"+RSCQuestionTemplates, url.Values{QPVerbose: []string{strconv.FormatBool(verbose)}})
 }

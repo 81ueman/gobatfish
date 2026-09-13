@@ -2,6 +2,7 @@ package question
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"sort"
 	"strconv"
@@ -505,6 +506,16 @@ func asInt(v any) (int64, bool) {
 	case int32:
 		return int64(n), true
 	case float64:
+		// JSON numbers decode to float64, so whole floats are accepted as the
+		// analogue of a Python int. Fractional values and values outside the
+		// int64 range are rejected.
+		const (
+			minInt64Float = -9223372036854775808.0 // -2**63, exactly representable
+			maxInt64Float = 9223372036854775808.0  // 2**63, exclusive upper bound
+		)
+		if math.IsNaN(n) || n != math.Trunc(n) || n < minInt64Float || n >= maxInt64Float {
+			return 0, false
+		}
 		return int64(n), true
 	default:
 		return 0, false
