@@ -3,6 +3,9 @@
 *.out
 /bin/
 
+# Docs build output
+site/
+
 # Editor / OS
 .DS_Store
 .idea/

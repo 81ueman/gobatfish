@@ -1,5 +1,8 @@
 # gobatfish
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/81ueman/gobatfish.svg)](https://pkg.go.dev/github.com/81ueman/gobatfish)
+[![Docs](https://img.shields.io/badge/docs-81ueman.github.io%2Fgobatfish-blue)](https://81ueman.github.io/gobatfish/)
+
 `gobatfish` is a Go client library for [Batfish](https://github.com/batfish/batfish),
 mirroring the public API of [pybatfish](https://github.com/batfish/pybatfish).
 
